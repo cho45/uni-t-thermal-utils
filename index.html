@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+		<link href="https://cdn.jsdelivr.net/npm/@mdi/font@6.x/css/materialdesignicons.min.css" rel="stylesheet">
+		<link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+
+		<script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js" defer></script>
+		<script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js" defer></script>
+		<script src="./script.js" defer></script>
+		<style>
+			div.tooltip {
+				position: absolute;
+				padding: 5px;
+				color: #fff;
+				background: rgba(0, 0, 0, 0.5);
+			}
+		</style>
+	</head>
+	<body>
+		<div id="app">
+			<v-app>
+				<v-main>
+					<v-container>
+						<h1 class="text-h2">
+							UTi260B Thermal Camera Utility
+						</h1>
+					</v-container>
+					<v-container>
+						<v-row>
+							<v-col>
+								<v-file-input
+									ref="input"
+									truncate-length="30"
+									accept=".bmp"
+									@change="changeImage"
+									hint="select .bmp file from thermal camera"
+									persistent-hint
+									></v-file-input>
+							</v-col>
+							<v-col style="padding-top: 25px">
+								<v-btn @click="loadButton">Load</v-btn>
+							</v-col>
+						</v-row>
+						<v-row>
+							<v-col>
+								<v-switch label="Show min target" hide-details v-model="options.showMinTarget"></v-switch>
+								<v-switch label="Show max target" hide-details v-model="options.showMaxTarget"></v-switch>
+								<v-switch label="Color palette" hide-details v-model="options.showPalette"></v-switch>
+								<v-switch label="Use temperature fix" hide-details v-model="options.useTemperatureFix"></v-switch>
+								<a href="https://github.com/Santi-hr/UNI-T-Thermal-Utilities/blob/7c6f5626f4969414d74d4d017049994bac332113/docs/temperature_issue.md" target="_blank">seealso</a>
+
+								<v-select :items="palettes" label="Palette" class="palletes-select" v-model="options.palette">
+									<template v-slot:selection="{ item, index }">
+										<img :src="item.image" style="height: 15px; width: 256px; margin-right: 10px"> {{ item.name }}
+									</template>
+									<template v-slot:item="{ item }">
+										<img :src="item.image" style="height: 15px; width: 256px; margin-right: 10px"> {{ item.name }}
+									</template>
+								</v-select>
+							</v-col>
+						</v-row>
+					</v-container>
+					<v-container>
+						Min: {{ withTempUnits(temp_min) }}
+						Max: {{ withTempUnits(temp_max) }}
+						(emissivity: {{ emissivity }})
+					</v-container>
+					<v-container>
+						<div ref="images">
+							<canvas ref="loaded"></canvas>
+							<canvas ref="raw"></canvas>
+							<canvas ref="fixed"></canvas>
+							<canvas ref="paletted"></canvas>
+						</div>
+						<canvas ref="palette" style="width: 256px; height: 256px; display: none"></canvas>
+					</v-container>
+				</v-main>
+				<div class="tooltip" ref="tooltip">100</div>
+			</v-app>
+		</div>
+	</body>
+</html>
